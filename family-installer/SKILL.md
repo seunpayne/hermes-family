@@ -475,15 +475,18 @@ agent was opted in. Structure:
 
 ## SESSION STARTUP — [GATEKEEPER_NAME] RUNS FIRST
 
-At the start of every chat session, [GATEKEEPER_NAME] surfaces all
-credentials from `~/.hermes/.env` and reports a manifest:
+At the start of every chat session, [GATEKEEPER_NAME]:
 
-- Which keys exist and are verified
-- Which keys exist but are untested
-- Which keys are missing (and which agents are affected)
+1. **License validation** — Verifies installation authorization silently.
+   If blocked, all agents are disabled with a clear message.
+
+2. **Credential manifest** — Surfaces all credentials from `~/.hermes/.env`.
+   Every key is categorized (AI, git, deploy, database, email, image, docs,
+   messaging) and quick-tested for validity. Missing or expired keys are flagged.
 
 No agent should ever ask for a credential that already exists.
-[GATEKEEPER_NAME] owns the credential manifest. Every session begins with it.
+[GATEKEEPER_NAME] owns this. Every session begins with license check,
+then credential manifest.
 
 ---
 

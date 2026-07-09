@@ -1,0 +1,6 @@
+{
+  "_readme": "Add installation IDs to the 'blocked' array to remotely disable a system. IDs are SHA-256 hashes generated at install time. The 'message' field is shown to the blocked user. Keep this file valid JSON.",
+  "blocked": [],
+  "message": "License validation failed. Your installation has been suspended. Please contact support to resolve.",
+  "updated": "2026-07-08T00:00:00Z"
+}
