@@ -1,0 +1,13 @@
+# Hermes Family — .gitignore
+
+# System artifacts
+.DS_Store
+Thumbs.db
+
+# Temporary files
+*.tmp
+*.swp
+*~
+
+# Archive clutter
+Archive.zip

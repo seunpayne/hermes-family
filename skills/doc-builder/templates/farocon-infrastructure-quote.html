@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quotation — FAROCON LIMITED</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            font-size: 11pt;
+            line-height: 1.6;
+            color: #1a1a1a;
+            background: #fff;
+        }
+
+        .page {
+            max-width: 210mm;
+            margin: 0 auto;
+            padding: 15mm;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 3px solid #CBA135;
+        }
+
+        .logo {
+            font-size: 24pt;
+            font-weight: 700;
+            color: #0E1320;
+        }
+
+        .logo span { color: #CBA135; }
+
+        .quote-meta {
+            text-align: right;
+            font-size: 10pt;
+        }
+
+        .quote-meta h1 {
+            font-size: 18pt;
+            color: #CBA135;
+            margin-bottom: 5px;
+        }
+
+        .client-section {
+            margin-bottom: 30px;
+        }
+
+        .client-section h2 {
+            font-size: 12pt;
+            color: #0E1320;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .section-title {
+            font-size: 14pt;
+            color: #0E1320;
+            margin: 25px 0 15px 0;
+            padding-bottom: 8px;
+            border-bottom: 2px solid #CBA135;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+        }
+
+        th {
+            background: #0E1320;
+            color: #fff;
+            padding: 12px 10px;
+            text-align: left;
+            font-weight: 600;
+            font-size: 10pt;
+        }
+
+        td {
+            padding: 12px 10px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        tr:nth-child(even) { background: #f8f9fa; }
+
+        .text-right { text-align: right; }
+        .text-center { text-align: center; }
+
+        .total-row {
+            background: #0E1320 !important;
+            color: #fff;
+            font-weight: 700;
+            font-size: 12pt;
+        }
+
+        .total-row td { border: none; }
+
+        .notes {
+            background: #f8f9fa;
+            padding: 15px;
+            border-left: 4px solid #CBA135;
+            margin: 20px 0;
+            font-size: 10pt;
+        }
+
+        .notes h4 {
+            color: #0E1320;
+            margin-bottom: 8px;
+        }
+
+        .notes ul {
+            margin-left: 20px;
+        }
+
+        .notes li { margin-bottom: 5px; }
+
+        .footer {
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 2px solid #e0e0e0;
+            text-align: center;
+            font-size: 9pt;
+            color: #666;
+        }
+
+        .signature-section {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 50px;
+            gap: 50px;
+        }
+
+        .signature-box {
+            flex: 1;
+            border-top: 1px solid #0E1320;
+            padding-top: 10px;
+        }
+
+        .signature-box p {
+            font-size: 10pt;
+            color: #666;
+        }
+
+        .highlight {
+            background: #fff8e6;
+            padding: 15px;
+            border: 1px solid #CBA135;
+            border-radius: 4px;
+            margin: 15px 0;
+        }
+
+        .scope-summary {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .scope-card {
+            background: #f8f9fa;
+            padding: 15px;
+            border-left: 4px solid #CBA135;
+            text-align: center;
+        }
+
+        .scope-card .number {
+            font-size: 28pt;
+            font-weight: 700;
+            color: #CBA135;
+        }
+
+        .scope-card .label {
+            font-size: 9pt;
+            color: #666;
+            text-transform: uppercase;
+        }
+    </style>
+</head>
+<body>
+    <div class="page">
+        <!-- Header -->
+        <div class="header">
+            <div class="logo">FARO<span>CON</span></div>
+            <div class="quote-meta">
+                <h1>QUOTATION</h1>
+                <p><strong>Quote No:</strong> {{QUOTE_NUMBER}}</p>
+                <p><strong>Date:</strong> {{DATE}}</p>
+                <p><strong>Valid Until:</strong> {{VALID_UNTIL}}</p>
+            </div>
+        </div>
+
+        <!-- Client Info -->
+        <div class="client-section">
+            <h2>Prepared For</h2>
+            <p><strong>{{CLIENT_NAME}}</strong><br>
+            {{CLIENT_ORG}}<br>
+            {{CLIENT_ADDRESS}}</p>
+        </div>
+
+        <!-- Project Title -->
+        <h2 class="section-title">Project: {{PROJECT_TITLE}}</h2>
+
+        <!-- Scope Summary Cards — customise number/label pairs -->
+        <div class="scope-summary">
+            <div class="scope-card">
+                <div class="number">{{SCOPE_COUNT_1}}</div>
+                <div class="label">{{SCOPE_LABEL_1}}</div>
+            </div>
+            <div class="scope-card">
+                <div class="number">{{SCOPE_COUNT_2}}</div>
+                <div class="label">{{SCOPE_LABEL_2}}</div>
+            </div>
+            <div class="scope-card">
+                <div class="number">{{SCOPE_COUNT_3}}</div>
+                <div class="label">{{SCOPE_LABEL_3}}</div>
+            </div>
+        </div>
+
+        <!-- Line Items -->
+        <h2 class="section-title">Pricing Breakdown</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th style="width: 50%;">Item</th>
+                    <th class="text-center">Qty</th>
+                    <th class="text-right">Unit Price (₦)</th>
+                    <th class="text-right">Total (₦)</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Repeat rows as needed -->
+                <tr>
+                    <td><strong>{{ITEM_1_NAME}}</strong><br>
+                    <small>{{ITEM_1_DESC}}</small></td>
+                    <td class="text-center">{{ITEM_1_QTY}}</td>
+                    <td class="text-right">{{ITEM_1_UNIT}}</td>
+                    <td class="text-right">{{ITEM_1_TOTAL}}</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <!-- Optional Service Contract block (include when applicable) -->
+        <h2 class="section-title">Optional Service Contract (Post-Installation)</h2>
+        <div class="highlight">
+            <p><strong>Choose your support tier:</strong></p>
+            <table style="margin-top: 10px;">
+                <thead>
+                    <tr>
+                        <th>Plan</th>
+                        <th class="text-center">Coverage</th>
+                        <th class="text-right">Annual Cost (₦)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Basic</strong><br><small>Remote support, quarterly preventive maintenance</small></td>
+                        <td class="text-center">{{SERVICE_SITES}}</td>
+                        <td class="text-right">{{SERVICE_BASIC_COST}}</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Standard</strong><br><small>Remote support, bi-annual maintenance, 48hr response SLA</small></td>
+                        <td class="text-center">{{SERVICE_SITES}}</td>
+                        <td class="text-right">{{SERVICE_STD_COST}}</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Premium</strong><br><small>24/7 support, quarterly maintenance, 24hr response SLA, hardware replacement</small></td>
+                        <td class="text-center">{{SERVICE_SITES}}</td>
+                        <td class="text-right">{{SERVICE_PREM_COST}}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Totals -->
+        <table style="margin-top: 30px;">
+            <tbody>
+                <tr>
+                    <td colspan="3" class="text-right"><strong>Subtotal:</strong></td>
+                    <td class="text-right">{{SUBTOTAL}}</td>
+                </tr>
+                <tr>
+                    <td colspan="3" class="text-right"><strong>VAT (7.5%):</strong></td>
+                    <td class="text-right">{{VAT}}</td>
+                </tr>
+                <tr class="total-row">
+                    <td colspan="3" class="text-right">GRAND TOTAL:</td>
+                    <td class="text-right">₦{{GRAND_TOTAL}}</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <!-- Payment Terms -->
+        <h2 class="section-title">Payment Terms</h2>
+        <div class="notes">
+            <ul>
+                <li><strong>50% deposit</strong> upon acceptance of quote (to commence work)</li>
+                <li><strong>30% milestone</strong> upon completion of hardware installation</li>
+                <li><strong>20% balance</strong> upon commissioning and handover</li>
+                <li>Quote valid for <strong>30 days</strong> from date of issue</li>
+                <li>Installation timeline: <strong>{{INSTALL_TIMELINE}}</strong> from deposit receipt</li>
+            </ul>
+        </div>
+
+        <!-- Exclusions -->
+        <h2 class="section-title">Exclusions</h2>
+        <div class="notes" style="border-left-color: #999; background: #f5f5f5;">
+            <ul>
+                {{EXCLUSIONS_LIST}}
+            </ul>
+        </div>
+
+        <!-- Warranty -->
+        <h2 class="section-title">Warranty</h2>
+        <div class="notes" style="border-left-color: #28a745; background: #f0fff4;">
+            <ul>
+                <li><strong>Hardware:</strong> {{WARRANTY_HARDWARE}}</li>
+                <li><strong>Workmanship:</strong> {{WARRANTY_WORKMANSHIP}}</li>
+                <li><strong>Support:</strong> 30 days complimentary remote support post-handover</li>
+            </ul>
+        </div>
+
+        <!-- Site List (for multi-site projects) -->
+        <h2 class="section-title">Installation Sites</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th style="width: 10%;">#</th>
+                    <th style="width: 40%;">Site Name</th>
+                    <th style="width: 30%;">Coordinates / Location</th>
+                    <th class="text-center" style="width: 20%;">Extensions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {{SITES_TABLE_ROWS}}
+                <!-- Template row:
+                <tr><td>1</td><td>Site Name</td><td>Lat°N, Lon°E</td><td class="text-center">N</td></tr>
+                -->
+            </tbody>
+        </table>
+
+        <!-- Signature -->
+        <div class="signature-section">
+            <div class="signature-box">
+                <p><strong>For FAROCON LIMITED:</strong></p>
+                <p style="height: 50px;"></p>
+                <p>________________________</p>
+                <p>Seun Payne Jackson</p>
+                <p>Authorized Signatory</p>
+            </div>
+            <div class="signature-box">
+                <p><strong>For {{CLIENT_ORG}}:</strong></p>
+                <p style="height: 50px;"></p>
+                <p>________________________</p>
+                <p>{{CLIENT_NAME}}</p>
+                <p>Authorized Signatory</p>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="footer">
+            <p>FAROCON LIMITED | Network & Power Infrastructure Delivery</p>
+            <p>Abuja, Nigeria | www.farocon.com.ng</p>
+            <p>This quotation is confidential and intended solely for the addressee.</p>
+        </div>
+    </div>
+</body>
+</html>

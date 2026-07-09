@@ -1,0 +1,62 @@
+{
+  "manifest_version": "2.0",
+  "captured_at": "YYYY-MM-DDTHH:MM:SS+TZ",
+  "owner": "Seun Omololu (seunpayne)",
+  "source_machine": {
+    "hostname": "[hostname from uname -n]",
+    "os": "[macOS version from sw_vers]",
+    "arch": "[arm64 or x86_64 from uname -m]",
+    "timezone": "Africa/Lagos"
+  },
+  "hermes": {
+    "version": "[hermes --version]",
+    "install_path": "~/.hermes/hermes-agent",
+    "config_path": "~/.hermes/config.yaml",
+    "secrets_path": "~/.hermes/.env",
+    "node_version": "[node --version]",
+    "npm_version": "[npm --version]"
+  },
+  "model_routing": {
+    "orchestration": "[model] ([provider])",
+    "planning": "[model] ([provider])",
+    "execution": "[model] ([provider])",
+    "operations": "[model] ([provider])",
+    "vision": "[model] ([provider])",
+    "image_gen": "[model] ([provider])"
+  },
+  "skills": {
+    "total": 0,
+    "openclaw_imports_count": 0,
+    "openclaw_imports": ["[ls ~/.hermes/skills/openclaw-imports/ output]"]
+  },
+  "plugins": ["[ls ~/.hermes/plugins/ output]"],
+  "profiles": ["[hermes profile list output]"],
+  "cron_jobs": [
+    {
+      "id": "[job id from hermes cron list]",
+      "name": "[job name]",
+      "schedule": "[cron expression or 'every N']",
+      "skills": ["[skill names if any]"],
+      "deliver": "[origin|telegram|local]"
+    }
+  ],
+  "credential_keys": [
+    "[grep -E '^[A-Z_]' ~/.hermes/.env | cut -d= -f1 | sort output]"
+  ],
+  "supabase": {
+    "connected": true,
+    "tables_present": ["clients","projects","tasks","agent_runs","decisions","credentials_status","assets","deployments","billing_events","invoices","escalations","memory"],
+    "notes": "State is cloud-hosted. No local tables to migrate."
+  },
+  "what_moves": {
+    "skills_directory": "tar -czf hermes-skills-YYYYMMDD.tar.gz -C ~/.hermes skills/",
+    "config_yaml": "Copy ~/.hermes/config.yaml. Verify no secrets embedded.",
+    "cron_jobs": "Recreate manually. Job definitions above.",
+    "memory": "Optional. ~/.hermes/sessions/ contains SQLite DB."
+  },
+  "what_never_moves": [
+    "~/.hermes/.env — ALL API keys",
+    "~/.hermes/auth.json — OAuth tokens",
+    "~/.hermes/sessions/ — Optional convenience"
+  ]
+}
