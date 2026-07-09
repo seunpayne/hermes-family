@@ -37,8 +37,8 @@ with defined lanes, handoffs, security scanning, and monitoring.
 
 | Option | Price |
 |--------|-------|
-| **Full payment** | ₦35,000 |
-| **2-installment plan** | ₦20,000 × 2 (₦40,000 total) |
+| **Full payment** | ₦50,000 |
+| **2-installment plan** | ₦28,000 × 2 (₦56,000 total) |
 
 ---
 
@@ -58,8 +58,8 @@ with defined lanes, handoffs, security scanning, and monitoring.
 
 | Option | Price |
 |--------|-------|
-| **Full payment** | ₦75,000 |
-| **3-installment plan** | ₦30,000 × 3 (₦90,000 total) |
+| **Full payment** | ₦100,000 |
+| **3-installment plan** | ₦38,000 × 3 (₦114,000 total) |
 
 ---
 
@@ -78,8 +78,8 @@ with defined lanes, handoffs, security scanning, and monitoring.
 
 | Option | Price |
 |--------|-------|
-| **Full payment** | ₦120,000 |
-| **3-installment plan** | ₦45,000 × 3 (₦135,000 total) |
+| **Full payment** | ₦150,000 |
+| **3-installment plan** | ₦55,000 × 3 (₦165,000 total) |
 
 ---
 
@@ -96,9 +96,9 @@ with defined lanes, handoffs, security scanning, and monitoring.
 
 | From → To | Upgrade Cost |
 |-----------|-------------|
-| Solo → Studio | ₦45,000 (₦75,000 - ₦35,000 + ₦5,000 processing) |
-| Solo → Full House | ₦90,000 |
-| Studio → Full House | ₦50,000 |
+| Solo → Studio | ₦55,000 |
+| Solo → Full House | ₦105,000 |
+| Studio → Full House | ₦55,000 |
 
 Upgrades are one-time. Pay the difference + ₦5,000. New agents and skills installed immediately.
 
@@ -143,9 +143,9 @@ For the first 10 buyers:
 
 | Tier | Beta Price | Regular Price | Savings |
 |------|-----------|---------------|---------|
-| Solo | ₦25,000 | ₦35,000 | ₦10,000 |
-| Studio | ₦50,000 | ₦75,000 | ₦25,000 |
-| Full House | ₦85,000 | ₦120,000 | ₦35,000 |
+| Solo | ₦35,000 | ₦50,000 | ₦15,000 |
+| Studio | ₦70,000 | ₦100,000 | ₦30,000 |
+| Full House | ₦100,000 | ₦150,000 | ₦50,000 |
 
 Beta buyers also get: lifetime free updates (all new skills and agents added to the family).
 
@@ -155,6 +155,6 @@ Beta buyers also get: lifetime free updates (all new skills and agents added to 
 
 > For less than the cost of ONE website from an agency, you get a team that builds UNLIMITED websites, apps, proposals, and content — forever.
 
-> One junior developer costs ₦150,000/month. The full Hermes Family system costs ₦120,000 once. It doesn't call in sick, doesn't need a laptop, and works 24/7.
+> One junior developer costs ₦150,000/month. The full Hermes Family system costs ₦150,000 once. It doesn't call in sick, doesn't need a laptop, and works 24/7.
 
 > You're not buying software. You're buying output capacity. The difference between "I can take 2 clients this quarter" and "I can take 10."
