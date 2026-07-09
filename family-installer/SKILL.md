@@ -13,6 +13,21 @@ delivery operating system. The difference from v1.0: **you don't get
 all 13 agents.** You opt in to the ones you need, name them, and
 get only their skills. No bloat.
 
+## Distribution
+
+The installer ships as part of the `hermes-family` repo.
+New users install it via:
+
+```bash
+curl -sSL https://raw.githubusercontent.com/seunpayne/hermes-family/main/bootstrap.sh | bash
+```
+
+The bootstrap script clones the repo (private — invite-only) and places
+the installer skill at `~/.hermes/skills/family/family-installer/`.
+
+The repo also contains: all 41 Family Skills in `skills/`, marketing copy in
+`marketing/copy.md`, and Nigerian pricing in `marketing/pricing.md`.
+
 ---
 
 ## THE 13 AGENTS — AS MODULES
@@ -458,6 +473,20 @@ agent was opted in. Structure:
 
 ---
 
+## SESSION STARTUP — [GATEKEEPER_NAME] RUNS FIRST
+
+At the start of every chat session, [GATEKEEPER_NAME] surfaces all
+credentials from `~/.hermes/.env` and reports a manifest:
+
+- Which keys exist and are verified
+- Which keys exist but are untested
+- Which keys are missing (and which agents are affected)
+
+No agent should ever ask for a credential that already exists.
+[GATEKEEPER_NAME] owns the credential manifest. Every session begins with it.
+
+---
+
 ## MODEL ROUTING
 
 [Only the lanes relevant to opted-in agents]
@@ -532,17 +561,25 @@ If they skipped FAL/Designer → no FAL_KEY in the template.
 
 ### 7.5 — Install Skills
 
-Copy only the skills for opted-in agents from the source installation:
+Copy only the skills for opted-in agents from the family repo.
+
+**Primary source:** `~/hermes-family/skills/` (created by bootstrap.sh)
 
 ```bash
 # For each opted-in agent, copy their bundled skills
-cp -r ~/.hermes/skills/Family\ Skills/[skill-name] ~/.hermes/skills/
+# Source: ~/hermes-family/skills/[skill-name]
+# Target: ~/.hermes/skills/[skill-name]
+cp -r ~/hermes-family/skills/[skill-name] ~/.hermes/skills/
 ```
 
-Skills that no opted-in agent needs are NOT copied.
+**Fallback source:** `~/.hermes/skills/Family Skills/` (if running on the original development machine)
 
-If source skills aren't available locally:
-→ Generate `~/.hermes/skills-to-acquire.md` listing only the needed skills.
+If neither source is available:
+→ "The Family Skills aren't available locally. Clone the repo first:"
+→ `git clone https://github.com/seunpayne/hermes-family.git ~/hermes-family`
+→ Then re-run stamp-out.
+
+Skills that no opted-in agent needs are NOT copied. No bloat.
 
 ### 7.6 — Flag Owner-Specific Skills
 
@@ -613,3 +650,35 @@ the full wizard.
 7. **Language-match the owner.** Pidgin, Yoruba, Spanish, whatever they use.
 8. **Career is a package deal.** All three or none.
 9. **Core is non-negotiable.** Orchestrator + Gatekeeper always included.
+
+---
+
+## PITFALLS
+
+### No GitHub token in container
+The installer skill cannot create repos or push from inside a Docker container
+without `gh` CLI or `GITHUB_TOKEN`. Repo creation must be done from the owner's
+machine. The bootstrap.sh script handles the curl-and-install flow — no GitHub
+auth needed for installation, only for the initial repo push.
+
+### Skills not found at stamp-out time
+Section 7.5 tries `~/hermes-family/skills/` first (created by bootstrap.sh),
+then falls back to `~/.hermes/skills/Family Skills/` (original source machine).
+If neither exists, instruct the user to clone the repo manually before retrying.
+Never proceed with stamp-out if skills are missing — an empty skill directory
+produces non-functional agents.
+
+### Owner-specific content in bundled skills
+Five skills contain references to the original owner's business: `farocon-quoting`
+(FAROCON LIMITED), `erp-client-onboarding` (₦ pricing tiers), `sales-proposal-generator`
+(Abuja SME focus), `client-discovery` (Abuja market targeting), and
+`super-prompt-builder` (original owner's design taste). Always flag these after
+stamp-out if any were among the opted-in skills. Do NOT silently install them.
+
+---
+
+## REFERENCES
+
+- `references/repo-structure.md` — Directory layout of the hermes-family GitHub repo and install flow
+- `references/marketing-copy.md` — Six ad formats (one-liner through LinkedIn post) for promoting the installer
+- `references/pricing.md` — Nigerian pricing tiers, installment plans, beta discounts, add-ons, and pitch lines
