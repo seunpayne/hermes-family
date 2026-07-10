@@ -333,29 +333,38 @@ Below target: revise, re-score, then present.
 
 ## DESIGN SYSTEMS REFERENCE
 
-149 design system DESIGN.md files available at:
-~/.hermes/design-systems/[name]/DESIGN.md
+153 brand-grade DESIGN.md files from [Open Design](https://github.com/nexu-io/open-design)
+available at `~/.hermes/design-systems/[name]/`. Each file contains:
+colour palette, typography rules, component styling, layout principles,
+depth/elevation, do's and don'ts, responsive behaviour, and agent prompt guide.
 
-Each file contains: visual theme, colour palette, typography rules,
-component styling, layout principles, depth/elevation, do's and don'ts,
-responsive behaviour, and agent prompt guide.
+Installed during family setup via the family-installer. To refresh:
+```bash
+cd /tmp && rm -rf open-design
+git clone --depth 1 --filter=blob:none --sparse https://github.com/nexu-io/open-design.git
+cd open-design && git sparse-checkout set design-systems
+cp -r design-systems/* ~/.hermes/design-systems/
+```
 
-Useful reference systems for the delivery pipeline:
+Catalog (153 systems — partial):
   stripe — premium fintech, clean, high-trust
   linear-app — dark, sophisticated, developer-facing
   notion — editorial, soft, collaborative
   vercel — dark minimal, technical, professional
   supabase — dark, developer-focused, teal accent
   shopify — commerce, approachable, green accent
-  lovable — warm, modern, product-focused
-  corporate — traditional enterprise, conservative
-  premium — luxury, minimal, high-end
-  editorial — magazine-style, typographic-led
-  warm-editorial — editorial with warmth, human
-  enterprise — formal, institutional, trust-focused
+  apple — premium white space, cinematic imagery
+  airbnb — warm coral accent, rounded UI
+  spotify — vibrant green on dark, bold type
+  figma — vibrant multi-color, playful yet professional
+  sentry — dark dashboard, data-dense
+  coinbase — clean blue, trust-focused
+  nvidia — green-black energy, technical power
+  bmw — dark premium, precise engineering
+  ... and 139 more
 
 When a new client project starts with no existing design system:
-Consult the design systems library for the closest reference.
+Browse `~/.hermes/design-systems/` for the closest reference.
 Recommend to Seun before loading as project reference.
 
 ---

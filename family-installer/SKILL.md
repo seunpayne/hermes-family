@@ -584,6 +584,50 @@ If neither source is available:
 
 Skills that no opted-in agent needs are NOT copied. No bloat.
 
+### 7.5b — Install Reference Artifacts
+
+Skills reference external data that doesn't live inside skill directories.
+Install these now.
+
+**Playbooks** — Stack-specific build guides referenced by SOUL.md skill routing:
+
+```bash
+# Copy playbooks from the family repo
+mkdir -p ~/.hermes/playbooks
+cp ~/hermes-family/artifacts/playbooks/* ~/.hermes/playbooks/
+```
+
+Playbooks included:
+- `universal-principles.md` — Stack selection decision tree
+- `web-react-vite-supabase-vercel.md` — Website build playbook
+- `erp-react-native-watermelondb-supabase.md` — ERP build playbook
+- `dapp-evm-hardhat-wagmi.md` — DApp build playbook
+- `api-nodejs-fastify-supabase-railway.md` — API build playbook
+- `ai-chatbot-anthropic-supabase-react.md` — AI chatbot playbook
+- `lovable-decoupling.md` — Lovable migration playbook
+- `whatsapp-business-api-supabase.md` — WhatsApp integration playbook
+
+**Design Systems** — 153 brand-grade DESIGN.md files from Open Design:
+
+```bash
+# Clone design systems from open-design repo (sparse checkout — only design-systems/)
+mkdir -p ~/.hermes/design-systems
+cd /tmp && rm -rf open-design
+git clone --depth 1 --filter=blob:none --sparse https://github.com/nexu-io/open-design.git
+cd open-design && git sparse-checkout set design-systems
+cp -r design-systems/* ~/.hermes/design-systems/
+rm -rf /tmp/open-design
+```
+
+This gives the Designer agent access to 153 design systems including:
+stripe, linear-app, vercel, supabase, notion, apple, airbnb, spotify,
+figma, sentry, coinbase, nvidia, and 140+ more.
+
+Each is a `DESIGN.md` file with: colour palette, typography rules, spacing,
+component styles, motion, voice, brand, and anti-pattern documentation.
+
+Only installed if the Designer agent was opted in.
+
 ### 7.6 — Flag Owner-Specific Skills
 
 If any opted-in skills have owner-specific content (farocon-quoting,

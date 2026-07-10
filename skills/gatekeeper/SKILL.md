@@ -56,7 +56,7 @@ No further checks run. No agents activate. Session terminates.
 Run the credential manifest script:
 
 ```bash
-python3 ~/.hermes/skills/Family Skills/gatekeeper/scripts/credential-manifest.py
+python3 ~/.hermes/skills/Family\ Skills/gatekeeper/scripts/credential-manifest.py
 ```
 
 This script:
@@ -65,6 +65,12 @@ This script:
 - Prints the manifest with ✅/❌ indicators
 - Exports all values to the session environment
 - Exits non-zero if critical keys are missing
+
+**After the manifest: validate vision config consistency.**
+See `references/vision-config-validation.md` — the vision config in
+`config.yaml` is prone to cross-provider drift (model, base_url, api_key
+pointing at different providers). Luca must verify that provider, model,
+base_url, and api_key all match before any agent uses vision_analyze.
 
 **PITFALL — Hermes secret redaction:** The `.env` file is redacted by
 Hermes' security layer. `read_file()` returns empty content and terminal
@@ -110,28 +116,28 @@ Outline:       GET /api/documents.list → 200/401
 
 ```
 LUCA — CREDENTIAL MANIFEST
-
-AVAILABLE (✅ = verified, ⚠️ = present but untested):
-  ✅ DEEPSEEK_API_KEY      — AI: DeepSeek (all agents)
-  ⚠️ OPENROUTER_API_KEY    — AI: OpenRouter (not verified — 401)
-  ✅ GITHUB_TOKEN          — Git operations
-  ✅ VERCEL_TOKEN          — Deployments
-  ✅ SUPABASE_URL          — Database
-  ✅ SUPABASE_ANON_KEY     — Public queries
-  ✅ SUPABASE_SERVICE_ROLE_KEY — Admin queries
-  ✅ RESEND_API_KEY        — Email sending
-  ✅ OUTLINE_API_KEY       — Knowledge base
-  ⚠️ FAL_KEY               — Image generation (not yet tested)
-
-MISSING (❌ = not configured):
-  ❌ SLACK_BOT_TOKEN       — Slack delivery unavailable
-  ❌ TELEGRAM_BOT_TOKEN    — Telegram delivery unavailable
-
-[ORCHESTRATOR_NAME], you have [N]/[M] credentials active. [List] agents are fully operational.
-[If critical keys missing, list which agents are affected.]
+[manifest output]
 ```
 
-**Step 5 — Keep credentials alive in session**
+**Step 5 — Configuration Drift Check**
+
+After the credential manifest, Luca compares what's in `.env` against what's
+in `config.yaml`. Credentials can exist but be miswired:
+
+- **Vision config drift** (most common): The OpenRouter key is valid, but
+  `auxiliary.vision.base_url` points to DeepSeek instead of OpenRouter,
+  or `auxiliary.vision.model` references a non-existent model like
+  `gemini-3.5-flash` instead of `gemini-2.5-flash`, or `auxiliary.vision.api_key`
+  uses the DeepSeek key instead of the OpenRouter key.
+  → Symptom: vision_analyze fails silently with an auth or model-not-found error.
+
+- **Provider mismatch**: An API key for provider A is configured under
+  provider B's settings.
+
+When drift is detected, fix it using ONLY `hermes config set`, never by
+editing config.yaml directly — Hermes blocks direct file edits to config.
+
+**Step 6 — Keep credentials alive in session**
 
 After reporting, all validated keys should be set as environment variables
 for the duration of the session so agents can access them without re-sourcing.
@@ -246,23 +252,25 @@ Run every check in this exact order. **Stop and escalate immediately if any chec
 ### CHECK 1 — System Policy
 
 **Action:**
-1. Read `~/.openclaw/system-policy.json`
-2. Confirm the file exists and is valid JSON
-3. Load into active context:
-   - Escalation policy
-   - Cost policy
-   - Destructive action policy
-   - Permission scopes
-   - Security policy
-   - Memory policy
+1. Read the system policy from the active SOUL.md context
+   (loaded as system prompt — always present in every session)
+2. Confirm the following sections exist:
+   - Escalation policy (SOUL.md: ESCALATION section)
+   - Cost policy (SOUL.md: BEFORE ANY BUILD → Cost check)
+   - Destructive action policy (SOUL.md: DESTRUCTIVE per Luca Check 6)
+   - Permission scopes (SOUL.md: SYSTEM-WIDE EXECUTION GUARD)
+   - Security policy (SOUL.md: HARD RULES + APPROVAL GATES)
+   - Memory policy (SOUL.md: DECISIONS — LOGGED IN THE MOMENT)
+
+The system policy IS the SOUL.md. There is no separate system-policy.json file.
+All policies are embedded in the system prompt loaded at session start.
 
 **Failure condition:**
-- File is missing
-- File is malformed (invalid JSON)
+- SOUL.md context is unavailable (system prompt failed to load)
 
 **On failure:**
 - Stop everything
-- Alert Seun immediately: "SYSTEM POLICY MISSING OR INVALID: Luca cannot load system policy. No agents can be activated until this is resolved."
+- Alert: "SYSTEM POLICY UNAVAILABLE: SOUL.md context not loaded. No agents can be activated."
 
 ---
 
