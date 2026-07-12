@@ -97,6 +97,7 @@ the token to a temp file and use `GIT_ASKPASS`.
 | Docs | `OUTLINE_API_KEY` | Knowledge base, reports |
 | Vision | `GOOGLE_AI_KEY` | Screenshot/PDF analysis |
 | Messaging | `SLACK_BOT_TOKEN`, `TELEGRAM_BOT_TOKEN` | Delivery platforms |
+| Cloud Platform | `RAILWAY_TOKEN` | Backend deployments (GraphQL API) |
 
 **Step 3 — Quick validity check**
 
