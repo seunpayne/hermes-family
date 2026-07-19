@@ -13,7 +13,6 @@
 set -euo pipefail
 
 REPO_URL="https://github.com/seunpayne/hermes-family.git"
-HERMES_SKILLS_DIR="${HOME}/.hermes/skills"
 TEMP_DIR=$(mktemp -d)
 
 cleanup() {
@@ -29,7 +28,7 @@ echo "╚═══════════════════════�
 echo ""
 
 # ----------------------------------------------------------
-# Step 1: Check Hermes is installed
+# Step 1: Check Hermes is installed and find its home
 # ----------------------------------------------------------
 if ! command -v hermes &> /dev/null; then
     echo "❌ Hermes Agent not found."
@@ -42,7 +41,14 @@ fi
 
 HERMES_VERSION=$(hermes --version 2>/dev/null || echo "unknown")
 echo "✓ Hermes Agent found (${HERMES_VERSION})"
+
+# Use hermes CLI to find the actual config/env paths — never hardcode ~/.hermes
+HERMES_CONFIG_DIR=$(dirname "$(hermes config path 2>/dev/null)" || echo "${HOME}/.hermes")
+HERMES_ENV_FILE=$(hermes config env-path 2>/dev/null || echo "${HOME}/.hermes/.env")
+
+echo "   Config dir: ${HERMES_CONFIG_DIR}"
 echo ""
+HERMES_SKILLS_DIR="${HERMES_CONFIG_DIR}/skills"
 
 # ----------------------------------------------------------
 # Step 2: Clone or update the family repo
@@ -81,7 +87,6 @@ echo ""
 
 # ----------------------------------------------------------
 # Step 4: Pre-load the Family Skills into the repo
-#         (They'll be selectively installed during onboarding)
 # ----------------------------------------------------------
 echo "→ Family Skills available: $(ls -1 ${FAMILY_DIR}/skills/ 2>/dev/null | wc -l) skills"
 echo "   (These will be selectively installed based on your agent choices)"
