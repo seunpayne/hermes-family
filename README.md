@@ -30,12 +30,19 @@ You don't get all 13. You pick the ones that match your work. A solo developer b
 ### Prerequisites
 
 - [Hermes Agent](https://github.com/NousResearch/hermes-agent) installed
+- [Git](https://git-scm.com/downloads) installed and in your PATH
 - That's it. The installer handles the rest.
 
 ### One Command
 
+**macOS / Linux / WSL:**
 ```bash
 curl -sSL https://raw.githubusercontent.com/seunpayne/hermes-family/main/bootstrap.sh | bash
+```
+
+**Windows (PowerShell):**
+```powershell
+irm https://raw.githubusercontent.com/seunpayne/hermes-family/main/bootstrap.ps1 | iex
 ```
 
 Then in Hermes:
