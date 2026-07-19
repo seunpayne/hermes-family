@@ -35,22 +35,15 @@ You don't get all 13. You pick the ones that match your work. A solo developer b
 
 ### One Command
 
-**Prerequisites:** You need a GitHub token with `repo` scope to access the private repo.
-Set it as an environment variable before the command.
-
 **macOS / Linux / WSL:**
 ```bash
-GITHUB_TOKEN=*** curl -sSL https://raw.githubusercontent.com/seunpayne/hermes-family/main/bootstrap.sh | bash
+curl -sSL https://raw.githubusercontent.com/seunpayne/hermes-family/main/bootstrap.sh | bash
 ```
 
 **Windows (PowerShell):**
 ```powershell
-$env:GITHUB_TOKEN=*** irm https://raw.githubusercontent.com/seunpayne/hermes-family/main/bootstrap.ps1 | iex
+irm https://raw.githubusercontent.com/seunpayne/hermes-family/main/bootstrap.ps1 | iex
 ```
-
-**Note:** If you already have Hermes configured with a GITHUB_TOKEN in your
-`.env` file, the bootstrap script will find it automatically and you don't
-need to pass it again.
 
 Then in Hermes:
 

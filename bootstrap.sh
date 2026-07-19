@@ -5,40 +5,11 @@
 #
 # Usage:
 #   curl -sSL https://raw.githubusercontent.com/seunpayne/hermes-family/main/bootstrap.sh | bash
-#   GITHUB_TOKEN=ghp_xxx curl -sSL ... | bash
-#   GH_TOKEN=ghp_xxx curl -sSL ... | bash
 # ============================================================
 
 set -euo pipefail
 
-# ── GitHub Auth ─────────────────────────────────────────────
-# Must be provided externally or already set
-if [ -z "${GITHUB_TOKEN:-}" ] && [ -z "${GH_TOKEN:-}" ]; then
-    # If we have a hermes env, try to source it
-    HERMES_ENV=$(command -v hermes &>/dev/null && hermes config env-path 2>/dev/null || echo "${HOME}/.hermes/.env")
-    if [ -f "$HERMES_ENV" ]; then
-        set -a
-        source "$HERMES_ENV" 2>/dev/null || true
-        set +a
-    fi
-fi
-
-TOKEN="${GITHUB_TOKEN:-${GH_TOKEN:-}}"
-
-if [ -z "$TOKEN" ]; then
-    echo ""
-    echo "╔══════════════════════════════════════════════════╗"
-    echo "║  This installer requires a GitHub token.         ║"
-    echo "║                                                  ║"
-    echo "║  Pass it as an environment variable:              ║"
-    echo "║    GITHUB_TOKEN=ghp_xxx curl ... | bash           ║"
-    echo "║    GH_TOKEN=ghp_xxx curl ... | bash               ║"
-    echo "╚══════════════════════════════════════════════════╝"
-    echo ""
-    exit 1
-fi
-
-REPO_URL="https://x-access-token:${TOKEN}@github.com/seunpayne/hermes-family.git"
+REPO_URL="https://github.com/seunpayne/hermes-family.git"
 TEMP_DIR=$(mktemp -d)
 
 cleanup() { rm -rf "${TEMP_DIR}"; }
@@ -90,7 +61,6 @@ else
         echo "   ✓ Cloned to ${FAMILY_DIR}"
     else
         echo "   ⚠ Could not clone from GitHub."
-        echo "   Check that your GITHUB_TOKEN has repo scope and is valid."
         exit 1
     fi
 fi

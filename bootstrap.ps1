@@ -4,47 +4,15 @@
     One command to set up a delivery OS on a fresh Hermes install on Windows.
 
 .DESCRIPTION
-    Detects Hermes config location, clones the family repo,
-    installs the family-installer skill.
+    Detects Hermes config location, clones the public family repo,
+    installs the family-installer skill for the interactive wizard.
 
 .USAGE
-    $env:GITHUB_TOKEN="***"; irm https://raw.githubusercontent.com/seunpayne/hermes-family/main/bootstrap.ps1 | iex
-    $env:GH_TOKEN="***"; irm ... | iex
+    irm https://raw.githubusercontent.com/seunpayne/hermes-family/main/bootstrap.ps1 | iex
 #>
 
 $ErrorActionPreference = "Stop"
-
-# ── GitHub Auth ─────────────────────────────────────────────
-$Token = $env:GITHUB_TOKEN
-if (-not $Token) { $Token = $env:GH_TOKEN }
-
-# Try sourcing from Hermes .env if not provided
-if (-not $Token) {
-    try {
-        $EnvPath = & hermes config env-path 2>&1 | Out-String
-        $EnvPath = $EnvPath.Trim()
-        if (Test-Path $EnvPath) {
-            Get-Content $EnvPath | ForEach-Object {
-                if ($_ -match '^GITHUB_TOKEN=***            $matches[1]
-                }
-            }
-        }
-    } catch { }
-}
-
-if (-not $Token) {
-    Write-Host ""
-    Write-Host "╔══════════════════════════════════════════════════╗" -ForegroundColor Red
-    Write-Host "║  This installer requires a GitHub token.         ║" -ForegroundColor Red
-    Write-Host "║                                                  ║" -ForegroundColor Red
-    Write-Host "║  Set it before running:                          ║" -ForegroundColor Red
-    Write-Host "║    `$env:GITHUB_TOKEN=`"***`"; irm ... | iex  ║" -ForegroundColor Red
-    Write-Host "╚══════════════════════════════════════════════════╝" -ForegroundColor Red
-    Write-Host ""
-    exit 1
-}
-
-$RepoUrl = "https://x-access-token:${Token}@github.com/seunpayne/hermes-family.git"
+$RepoUrl = "https://github.com/seunpayne/hermes-family.git"
 
 Write-Host ""
 Write-Host "╔══════════════════════════════════════════════════╗" -ForegroundColor Cyan
@@ -101,7 +69,6 @@ if (Test-Path (Join-Path $FamilyDir ".git")) {
         }
     } catch {
         Write-Host "   ⚠ Could not clone from GitHub." -ForegroundColor Yellow
-        Write-Host "   Check that your GITHUB_TOKEN has repo scope and is valid."
         exit 1
     }
 }
@@ -135,6 +102,10 @@ Write-Host "║                                                  ║" -Foregroun
 Write-Host "║  To start the wizard, type in Hermes:            ║" -ForegroundColor Cyan
 Write-Host "║                                                  ║" -ForegroundColor Cyan
 Write-Host "║      load family-installer                       ║" -ForegroundColor Cyan
+Write-Host "║                                                  ║" -ForegroundColor Cyan
+Write-Host "║  The installer will ask who you are, help you    ║" -ForegroundColor Cyan
+Write-Host "║  pick your agents, name them, and stamp out      ║" -ForegroundColor Cyan
+Write-Host "║  your personalized delivery OS.                  ║" -ForegroundColor Cyan
 Write-Host "║                                                  ║" -ForegroundColor Cyan
 Write-Host "║  Takes about 15 minutes. No bloat — you only     ║" -ForegroundColor Cyan
 Write-Host "║  get the agents and skills you choose.           ║" -ForegroundColor Cyan
