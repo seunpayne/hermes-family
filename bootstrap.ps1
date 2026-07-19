@@ -38,15 +38,17 @@ try {
     exit 1
 }
 
+# Use hermes config to find the real skills directory
 try {
     $ConfigPath = & hermes config path 2>&1 | Out-String
     $ConfigDir = Split-Path ($ConfigPath.Trim()) -Parent
+    Write-Host "   Config dir: $ConfigDir" -ForegroundColor Gray
 } catch {
     $ConfigDir = Join-Path $env:USERPROFILE ".hermes"
 }
 
 $SkillsDir = Join-Path $ConfigDir "skills"
-Write-Host "   Config dir: $ConfigDir" -ForegroundColor Gray
+Write-Host "   Skills dir: $SkillsDir" -ForegroundColor Gray
 Write-Host ""
 
 # ----------------------------------------------------------
@@ -62,13 +64,13 @@ try {
     [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
     $WebClient = New-Object System.Net.WebClient
     $WebClient.DownloadFile($ZipUrl, $TempZip)
-    Write-Host "   ✓ Downloaded ($((Get-Item $TempZip).Length / 1KB) KB)" -ForegroundColor Green
+    $SizeKB = [math]::Round((Get-Item $TempZip).Length / 1KB)
+    Write-Host "   ✓ Downloaded ($SizeKB KB)" -ForegroundColor Green
 
     Write-Host "→ Extracting..." -ForegroundColor Yellow
     if (Test-Path $ExtractDir) { Remove-Item -Recurse -Force $ExtractDir }
     Expand-Archive -Path $TempZip -DestinationPath $ExtractDir -Force
 
-    # The ZIP contains a folder named <repo>-<branch>
     $SourceDir = (Get-ChildItem $ExtractDir -Directory | Select-Object -First 1).FullName
 
     if (Test-Path $FamilyDir) { Remove-Item -Recurse -Force $FamilyDir }
@@ -79,7 +81,7 @@ try {
     Write-Host "   ✓ Extracted to $FamilyDir" -ForegroundColor Green
 } catch {
     Write-Host "   ⚠ Download failed: $_" -ForegroundColor Red
-    Write-Host "   Try: git clone https://github.com/$RepoOwner/$RepoName.git $FamilyDir"
+    Write-Host "   Download manually from $ZipUrl and extract to $FamilyDir"
     Write-Host ""
     exit 1
 }
@@ -89,10 +91,20 @@ Write-Host ""
 # Step 3: Install the installer skill
 # ----------------------------------------------------------
 Write-Host "→ Installing family-installer skill..." -ForegroundColor Yellow
-$InstallerTarget = Join-Path $SkillsDir "family" "family-installer"
-New-Item -ItemType Directory -Force -Path $InstallerTarget | Out-Null
+
+# Copy to all possible locations Hermes might look for skills
+$Locations = @(
+    (Join-Path $SkillsDir "family" "family-installer"),
+    (Join-Path $SkillsDir "family-installer")
+)
+
 $InstallerSource = Join-Path $FamilyDir "family-installer"
-Copy-Item -Recurse -Force (Join-Path $InstallerSource "*") $InstallerTarget
+
+foreach ($Target in $Locations) {
+    New-Item -ItemType Directory -Force -Path $Target | Out-Null
+    Copy-Item -Recurse -Force "$InstallerSource*" $Target
+}
+
 Write-Host "   ✓ Installer skill ready" -ForegroundColor Green
 Write-Host ""
 
