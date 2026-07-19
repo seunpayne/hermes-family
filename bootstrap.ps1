@@ -4,7 +4,7 @@
     One command to set up a delivery OS on a fresh Hermes install on Windows.
 
 .DESCRIPTION
-    Detects Hermes config location, clones the public family repo,
+    Downloads the family repo as a ZIP (no git needed), detects Hermes config,
     installs the family-installer skill for the interactive wizard.
 
 .USAGE
@@ -12,7 +12,10 @@
 #>
 
 $ErrorActionPreference = "Stop"
-$RepoUrl = "https://github.com/seunpayne/hermes-family.git"
+$RepoOwner = "seunpayne"
+$RepoName = "hermes-family"
+$Branch = "main"
+$ZipUrl = "https://github.com/$RepoOwner/$RepoName/archive/refs/heads/$Branch.zip"
 
 Write-Host ""
 Write-Host "╔══════════════════════════════════════════════════╗" -ForegroundColor Cyan
@@ -47,30 +50,38 @@ Write-Host "   Config dir: $ConfigDir" -ForegroundColor Gray
 Write-Host ""
 
 # ----------------------------------------------------------
-# Step 2: Clone or update the family repo
+# Step 2: Download family repo as ZIP and extract
 # ----------------------------------------------------------
-$FamilyDir = Join-Path $env:USERPROFILE "hermes-family"
+$FamilyDir = Join-Path $env:USERPROFILE "$RepoName"
+$TempZip = Join-Path $env:TEMP "$RepoName-$Branch.zip"
+$ExtractDir = Join-Path $env:TEMP "$RepoName-extract"
 
-if (Test-Path (Join-Path $FamilyDir ".git")) {
-    Write-Host "→ Updating existing hermes-family repo..." -ForegroundColor Yellow
-    Push-Location $FamilyDir
-    try { & git pull origin main 2>&1 | Out-Null } catch { }
-    Pop-Location
-} else {
-    Write-Host "→ Cloning hermes-family repo..." -ForegroundColor Yellow
-    $TempDir = Join-Path $env:TEMP "hermes-family-$(Get-Random)"
-    try {
-        & git clone $RepoUrl $TempDir 2>&1 | Out-Null
-        if (Test-Path $TempDir) {
-            if (Test-Path $FamilyDir) { Remove-Item -Recurse -Force $FamilyDir }
-            Copy-Item -Recurse $TempDir $FamilyDir
-            Remove-Item -Recurse -Force $TempDir
-            Write-Host "   ✓ Cloned to $FamilyDir" -ForegroundColor Green
-        }
-    } catch {
-        Write-Host "   ⚠ Could not clone from GitHub." -ForegroundColor Yellow
-        exit 1
-    }
+Write-Host "→ Downloading $RepoName from GitHub..." -ForegroundColor Yellow
+
+try {
+    [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
+    $WebClient = New-Object System.Net.WebClient
+    $WebClient.DownloadFile($ZipUrl, $TempZip)
+    Write-Host "   ✓ Downloaded ($((Get-Item $TempZip).Length / 1KB) KB)" -ForegroundColor Green
+
+    Write-Host "→ Extracting..." -ForegroundColor Yellow
+    if (Test-Path $ExtractDir) { Remove-Item -Recurse -Force $ExtractDir }
+    Expand-Archive -Path $TempZip -DestinationPath $ExtractDir -Force
+
+    # The ZIP contains a folder named <repo>-<branch>
+    $SourceDir = (Get-ChildItem $ExtractDir -Directory | Select-Object -First 1).FullName
+
+    if (Test-Path $FamilyDir) { Remove-Item -Recurse -Force $FamilyDir }
+    Move-Item -Path $SourceDir -Destination $FamilyDir
+    Remove-Item -Force $TempZip
+    Remove-Item -Recurse -Force $ExtractDir -ErrorAction SilentlyContinue
+
+    Write-Host "   ✓ Extracted to $FamilyDir" -ForegroundColor Green
+} catch {
+    Write-Host "   ⚠ Download failed: $_" -ForegroundColor Red
+    Write-Host "   Try: git clone https://github.com/$RepoOwner/$RepoName.git $FamilyDir"
+    Write-Host ""
+    exit 1
 }
 Write-Host ""
 

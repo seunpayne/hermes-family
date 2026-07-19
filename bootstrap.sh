@@ -2,6 +2,7 @@
 # ============================================================
 # Hermes Family — Bootstrap Installer v2.0
 # One command to set up a delivery OS on a fresh Hermes install.
+# Downloads ZIP from GitHub — no git required.
 #
 # Usage:
 #   curl -sSL https://raw.githubusercontent.com/seunpayne/hermes-family/main/bootstrap.sh | bash
@@ -9,8 +10,13 @@
 
 set -euo pipefail
 
-REPO_URL="https://github.com/seunpayne/hermes-family.git"
+OWNER="seunpayne"
+REPO="hermes-family"
+BRANCH="main"
+REPO_URL="https://github.com/${OWNER}/${REPO}.git"
+ZIP_URL="https://github.com/${OWNER}/${REPO}/archive/refs/heads/${BRANCH}.zip"
 TEMP_DIR=$(mktemp -d)
+TEMP_ZIP="${TEMP_DIR}/repo.zip"
 
 cleanup() { rm -rf "${TEMP_DIR}"; }
 trap cleanup EXIT
@@ -37,31 +43,59 @@ fi
 HERMES_VERSION=$(hermes --version 2>/dev/null || echo "unknown")
 echo "✓ Hermes Agent found (${HERMES_VERSION})"
 
-HERMES_CONFIG_DIR=$(dirname "$(hermes config path 2>/dev/null)" || echo "${HOME}/.hermes")
-HERMES_ENV_FILE=$(hermes config env-path 2>/dev/null || echo "${HOME}/.hermes/.env")
-
+HERMES_CONFIG_DIR=$(dirname "$(hermes config path 2>/dev/null)" 2>/dev/null || echo "${HOME}/.hermes")
 echo "   Config dir: ${HERMES_CONFIG_DIR}"
 echo ""
 HERMES_SKILLS_DIR="${HERMES_CONFIG_DIR}/skills"
+FAMILY_DIR="${HOME}/${REPO}"
 
 # ----------------------------------------------------------
-# Step 2: Clone or update the family repo
+# Step 2: Download family repo as ZIP and extract
 # ----------------------------------------------------------
-FAMILY_DIR="${HOME}/hermes-family"
-
-if [ -d "${FAMILY_DIR}/.git" ]; then
-    echo "→ Updating existing hermes-family repo..."
+if command -v git &>/dev/null && [ -d "${FAMILY_DIR}/.git" ]; then
+    echo "→ Updating existing repo via git pull..."
     cd "${FAMILY_DIR}"
-    git pull origin main 2>/dev/null || echo "   (could not pull — continuing with local copy)"
+    git pull origin main 2>/dev/null || echo "   (could not pull — using local copy)"
     cd - > /dev/null
 else
-    echo "→ Cloning hermes-family repo..."
-    if git clone "${REPO_URL}" "${TEMP_DIR}/hermes-family" 2>/dev/null; then
-        cp -r "${TEMP_DIR}/hermes-family" "${FAMILY_DIR}"
-        echo "   ✓ Cloned to ${FAMILY_DIR}"
+    echo "→ Downloading ${REPO} from GitHub..."
+    if command -v curl &>/dev/null; then
+        if curl -sL -o "${TEMP_ZIP}" "${ZIP_URL}"; then
+            echo "   ✓ Downloaded ($(du -h "${TEMP_ZIP}" | cut -f1))"
+        else
+            echo "   ⚠ Download failed. Falling back to git clone..."
+            if command -v git &>/dev/null; then
+                git clone "${REPO_URL}" "${FAMILY_DIR}" 2>/dev/null || { echo "   ❌ Git clone also failed."; exit 1; }
+                echo "   ✓ Cloned via git"
+            else
+                echo "   ❌ No git available. Install git or download manually from:"
+                echo "   ${ZIP_URL}"
+                exit 1
+            fi
+        fi
+    elif command -v wget &>/dev/null; then
+        wget -q -O "${TEMP_ZIP}" "${ZIP_URL}" || { echo "   ❌ Download failed."; exit 1; }
+        echo "   ✓ Downloaded"
     else
-        echo "   ⚠ Could not clone from GitHub."
-        exit 1
+        echo "   ⚠ curl/wget not found. Falling back to git clone..."
+        if command -v git &>/dev/null; then
+            git clone "${REPO_URL}" "${FAMILY_DIR}" 2>/dev/null || { echo "   ❌ Git clone failed."; exit 1; }
+            echo "   ✓ Cloned via git"
+        else
+            echo "   ❌ No download method available."
+            echo "   Download manually from: ${ZIP_URL}"
+            exit 1
+        fi
+    fi
+
+    # Extract ZIP if downloaded
+    if [ -f "${TEMP_ZIP}" ]; then
+        echo "→ Extracting..."
+        EXTRACTED_DIR=$(unzip -qql "${TEMP_ZIP}" | head -1 | awk '{print $NF}' | cut -d/ -f1)
+        unzip -o -q "${TEMP_ZIP}" -d "${TEMP_DIR}" 2>/dev/null || { echo "   ❌ Failed to extract ZIP (unzip required)."; exit 1; }
+        rm -rf "${FAMILY_DIR}" 2>/dev/null || true
+        mv "${TEMP_DIR}/${EXTRACTED_DIR}" "${FAMILY_DIR}"
+        echo "   ✓ Extracted to ${FAMILY_DIR}"
     fi
 fi
 echo ""
