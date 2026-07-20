@@ -94,7 +94,7 @@ Write-Host "→ Installing family-installer skill..." -ForegroundColor Yellow
 
 # Copy to all possible locations Hermes might look for skills
 $Locations = @(
-    (Join-Path $SkillsDir "family" "family-installer"),
+    (Join-Path (Join-Path $SkillsDir "family") "family-installer"),
     (Join-Path $SkillsDir "family-installer")
 )
 
